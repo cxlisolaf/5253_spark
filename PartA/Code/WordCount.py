@@ -14,8 +14,7 @@ from pyspark.sql.functions import regexp_replace, trim, col, lower
 def string_clean(text):
 
 	lowerCase = text.encode('utf-8').lower()
-	noPunc = lowerCase.translate(None,string.punctuation)
-	filterword = noPunc.strip()
+	filterword =re.sub(r'[^a-zA-Z ]','',lowerCase)
 	return filterword
 
 
