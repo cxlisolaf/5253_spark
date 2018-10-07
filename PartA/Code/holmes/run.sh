@@ -22,7 +22,7 @@ hdfs dfs -mkdir ${HDFS_INPUT_PATH}
 
 # Configure environment variables
 echo ----------------------------------------------------------
-echo Configure environtment variables...
+echo Configure environment variables...
 if [[ $SPARK_HOME != *"usr/lib/spark"* ]]; then export SPARK_HOME=/usr/lib/spark; fi
 if [[ $PYTHONPATH != *"usr/lib/spark/python"* ]]; then export PYTHONPATH=$SPARK_HOME/python/:$PYTHONPATH; fi
 if [[ $PYTHONPATH != *"usr/lib/spark/python/lib/py4j-0.10.7-src.zip"* ]]; then export PYTHONPATH=$SPARK_HOME/python/lib/py4j-0.10.7-src.zip:$PYTHONPATH; fi
