@@ -32,26 +32,38 @@ if __name__ == "__main__":
 	sqlContextItems = SQLContext(sparkItems)
 	dfItems.registerTempTable("items")
 
-	# Query for item review counts, filter for items with 100 or more reviews
 	reviews = sqlContextItems.sql("SELECT reviewText, overall FROM items")
+
+	bucketList = []
 
 	# Filter to a dataFrame for each bucket
 	bucketOne = reviews.filter(reviews['overall'] == '1.0')
+	bucketList.append(bucketOne)
 	bucketTwo = reviews.filter(reviews['overall'] == '2.0')
+	bucketList.append(bucketTwo)
 	bucketThree = reviews.filter(reviews['overall'] == '3.0')
+	bucketList.append(bucketThree)
 	bucketFour = reviews.filter(reviews['overall'] == '4.0')
+	bucketList.append(bucketFour)
 	bucketFive = reviews.filter(reviews['overall'] == '5.0')
+	bucketList.append(bucketFive)
 
-	# Process BucketOne
-	lines = bucketOne.rdd.map(lambda r: r[0])
-	words = lines.flatMap(lambda x: string_clean(x).split(' '))
-	filterwords = words.filter(lambda x: x not in stopwords)
-	filterwords = filterwords.filter(lambda x: x != "")
-	wordTuples = filterwords.map(lambda x: (x, 1))
-	wordCountTuple = wordTuples.reduceByKey(lambda x,y:x+y).sortByKey()
-	sortedWordCount = wordCountTuple.top(500,key=lambda(x,y):y)
+	for i in range(1,5):
 
-	#Output BucketOne results
-	with open('output.txt','w') as f:
-		for (word, count) in sortedWordCount:
-			f.write(str(word)+'\t'+str(count)+'\n')
+		filename = "output" + str(i) +".txt"
+		bucket =  bucketList[i]
+		# Process BucketOne
+		lines = bucket.rdd.map(lambda r: r[0])
+		words = lines.flatMap(lambda x: string_clean(x).split(' '))
+		filterwords = words.filter(lambda x: x not in stopwords)
+		filterwords = filterwords.filter(lambda x: x != "")
+		wordTuples = filterwords.map(lambda x: (x, 1))
+		wordCountTuple = wordTuples.reduceByKey(lambda x,y:x+y).sortByKey()
+		sortedWordCount = wordCountTuple.top(500,key=lambda(x,y):y)
+
+		#Output BucketOne results
+		with open(filename,'w') as f:
+			for (word, count) in sortedWordCount:
+				f.write(str(word)+'\t'+str(count)+'\n')
+
+
