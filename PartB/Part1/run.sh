@@ -11,11 +11,6 @@ if [[ $SPARK_HOME != *"usr/lib/spark"* ]]; then export SPARK_HOME=/usr/lib/spark
 if [[ $PYTHONPATH != *"usr/lib/spark/python"* ]]; then export PYTHONPATH=$SPARK_HOME/python/:$PYTHONPATH; fi
 if [[ $PYTHONPATH != *"usr/lib/spark/python/lib/py4j-0.10.7-src.zip"* ]]; then export PYTHONPATH=$SPARK_HOME/python/lib/py4j-0.10.7-src.zip:$PYTHONPATH; fi
 
-# Install pymongo
-echo ----------------------------------------------------------
-echo Install pymongo...
-sudo pip install pymongo
-
 # Remove Existing Output
 echo ----------------------------------------------------------
 echo Remove existing output files...

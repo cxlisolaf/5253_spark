@@ -8,7 +8,7 @@ outfile = "output.txt"
 
 # Setup metadata data
 sparkMetadata = SparkSession.builder.appName("myApp") \
-	.config("spark.mongodb.input.uri", "mongodb://student:student@ec2-54-173-174-196.compute-1.amazonaws.com/test.metadata") \
+	.config("spark.mongodb.input.uri", "mongodb://student:student@ec2-54-210-44-189.compute-1.amazonaws.com/test.metadata") \
 	.getOrCreate()
 dfMetadata = sparkMetadata.read.format("com.mongodb.spark.sql").load()
 sqlContextMetadata = SQLContext(sparkMetadata)
@@ -16,7 +16,7 @@ dfMetadata.registerTempTable("metadata")
 
 # Setup item data
 sparkItems = SparkSession.builder.appName("myApp") \
-	.config("spark.mongodb.input.uri", "mongodb://student:student@ec2-54-173-174-196.compute-1.amazonaws.com/test.reviews") \
+	.config("spark.mongodb.input.uri", "mongodb://student:student@ec2-54-210-44-189.compute-1.amazonaws.com/test.reviews") \
 	.getOrCreate()
 dfItems = sparkItems.read.format("com.mongodb.spark.sql").load()
 sqlContextItems = SQLContext(sparkItems)
