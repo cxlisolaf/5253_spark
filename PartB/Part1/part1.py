@@ -1,8 +1,8 @@
 # RUN USING:
-# spark-submit --packages org.mongodb.spark:mongo-spark-connector_2.11:2.3.0 test.py
+# spark-submit --packages org.mongodb.spark:mongo-spark-connector_2.11:2.3.0 part1.py
 
 from pyspark.sql import SparkSession, SQLContext
-from pyspark.sql.functions import array_contains
+from pyspark.sql.functions import array_contains, col
 
 outfile = "output.txt"
 
@@ -51,7 +51,6 @@ dfItem = dfLeft \
 
 # Now join the metadata
 dfMetadata = sqlContextMetadata.sql("SELECT asin, title, categories FROM metadata")
-dfMetadata.show()
 dfJoin = dfItem \
 	.join(dfMetadata, ['asin']) \
 	.orderBy('avg', ascending=False)
@@ -62,20 +61,32 @@ df_movies = dfJoin.filter(array_contains(dfJoin['categories'], 'Movies & TV'))
 df_videoGames = dfJoin.filter(array_contains(dfJoin['categories'], 'Video Games'))
 df_Toys = dfJoin.filter(array_contains(dfJoin['categories'], 'Toys & Games'))
 
-# Get the top record for each category
-topCD = df_CDs.limit(1).collect()
-topMovie = df_movies.limit(1).collect()
-topVideoGame = df_videoGames.limit(1).collect()
-topToy = df_Toys.limit(1).collect()
+# Get the top rating for each category
+top_CD_Rating = df_CDs.limit(1).collect()
+top_Movie_Rating = df_movies.limit(1).collect()
+top_VideoGame_Rating = df_videoGames.limit(1).collect()
+top_Toy_Rating = df_Toys.limit(1).collect()
+
 
 # Output results
 file = open(outfile, "w")
-if len(topCD) > 0 and hasattr(topCD[0], 'num'):
-    file.write("CDs & Vinyl"+'\t'+str(topCD[0].title)+'\t'+str(topCD[0].num)+'\t'+str(topCD[0].avg)+'\n')
-if len(topMovie) > 0 and hasattr(topMovie[0], 'num'):
-    file.write("Movies & TV"+'\t'+str(topMovie[0].title)+'\t'+str(topMovie[0].num)+'\t'+str(topMovie[0].avg)+'\n')
-if len(topToy) > 0 and hasattr(topToy[0], 'num'):
-    file.write("Toys & Games"+'\t'+str(topToy[0].title)+'\t'+str(topToy[0].num)+'\t'+str(topToy[0].avg)+'\n') 
-if len(topVideoGame) > 0 and hasattr(topVideoGame[0], 'num'):
-    file.write("Video Games"+'\t'+str(topVideoGame[0].title)+'\t'+str(topVideoGame[0].num)+'\t'+str(topVideoGame[0].avg)+'\n')
+
+# Now get the top items for each category
+if len(top_CD_Rating) > 0 and hasattr(top_CD_Rating[0], 'avg'):
+	top_CDs = dfJoin.filter(dfJoin["avg"] == top_CD_Rating[0].avg).collect()
+	for row in top_CDs:
+		file.write("CDs & Vinyl"+'\t'+str(row.title)+'\t'+str(row.num)+'\t'+str(row.avg)+'\n')
+if len(top_Movie_Rating) > 0 and hasattr(top_Movie_Rating[0], 'avg'):
+	top_movies = dfJoin.filter(dfJoin["avg"] == top_Movie_Rating[0].avg).collect()
+	for row in top_movies:
+		file.write("Movies & TV"+'\t'+str(row.title)+'\t'+str(row.num)+'\t'+str(row.avg)+'\n')
+if len(top_VideoGame_Rating) > 0 and hasattr(top_VideoGame_Rating[0], 'avg'):
+	top_videoGames = dfJoin.filter(dfJoin["avg"] == top_VideoGame_Rating[0].avg).collect()
+	for row in top_videoGames:
+		file.write("Toys & Games"+'\t'+str(row.title)+'\t'+str(row.num)+'\t'+str(row.avg)+'\n')
+if len(top_Toy_Rating) > 0 and hasattr(top_Toy_Rating[0], 'avg'):
+	top_Toys = dfJoin.filter(dfJoin["avg"] == top_Toy_Rating[0].avg).collect()
+	for row in top_Toys:
+		file.write("Video Games"+'\t'+str(row.title)+'\t'+str(row.num)+'\t'+str(row.avg)+'\n')
+
 file.close()
