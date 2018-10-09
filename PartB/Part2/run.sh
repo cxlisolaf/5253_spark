@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PYTHON_FILE=part2.py
-OUTPUT_FILE=output.txt
+OUTPUT_FILE=output*
 LOCAL_OUTPUT_PATH=./
 
 # Configure environment variables
