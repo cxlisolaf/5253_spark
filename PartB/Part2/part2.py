@@ -48,9 +48,9 @@ if __name__ == "__main__":
 	bucketFive = reviews.filter(reviews['overall'] == '5.0')
 	bucketList.append(bucketFive)
 
-	for i in range(1,5):
+	for i in range(0,5):
 
-		filename = "output" + str(i) +".txt"
+		filename = "output" + str(i+1) +".txt"
 		bucket =  bucketList[i]
 		# Process BucketOne
 		lines = bucket.rdd.map(lambda r: r[0])
